@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.getjoystick/nanobanana-mcp",
-  "description": "Lean MCP server for Google's Nano Banana (Gemini) image models. Generates and edits images, returns file paths.",
+  "description": "Lean MCP server for Google's Nano Banana (Gemini) image models. Returns file paths, not base64.",
   "repository": {
     "url": "https://github.com/getjoystick/nanobanana-mcp",
     "source": "github"
