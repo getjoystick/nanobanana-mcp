@@ -1,0 +1,5 @@
+node_modules/
+dist/
+nano-banana/
+.env
+.DS_Store
