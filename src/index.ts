@@ -168,7 +168,7 @@ const common = {
   filename: z.string().optional().describe("Base filename without extension"),
 };
 
-const server = new McpServer({ name: "nanobanana-mcp", version: "0.1.1" });
+const server = new McpServer({ name: "nanobanana-mcp", version: "0.1.2" });
 
 server.registerTool(
   "generate_image",

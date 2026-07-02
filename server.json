@@ -1,0 +1,42 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.getjoystick/nanobanana-mcp",
+  "description": "Lean MCP server for Google's Nano Banana (Gemini) image models. Generates and edits images, returns file paths.",
+  "repository": {
+    "url": "https://github.com/getjoystick/nanobanana-mcp",
+    "source": "github"
+  },
+  "version": "0.1.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@nanobanana/mcp",
+      "version": "0.1.2",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "GEMINI_API_KEY",
+          "description": "Gemini API key from https://aistudio.google.com/apikey",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "NANOBANANA_MODEL",
+          "description": "Default image model override (default: gemini-3.1-flash-image)",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "NANOBANANA_OUTPUT_DIR",
+          "description": "Default output directory override",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 {
   "name": "@nanobanana/mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
+  "mcpName": "io.github.getjoystick/nanobanana-mcp",
   "description": "Lean MCP server for Google's Nano Banana (Gemini) image models. Generates and edits images, returns file paths.",
   "type": "module",
   "publishConfig": {

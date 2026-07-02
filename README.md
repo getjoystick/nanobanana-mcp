@@ -20,6 +20,8 @@ Get a free Gemini API key at [aistudio.google.com/apikey](https://aistudio.googl
 claude mcp add nanobanana -e GEMINI_API_KEY=your_key -- npx -y @nanobanana/mcp
 ```
 
+Also listed in the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.getjoystick/nanobanana-mcp`.
+
 **Claude Desktop / Cursor**: add this to `claude_desktop_config.json` or `.cursor/mcp.json`:
 
 ```json
