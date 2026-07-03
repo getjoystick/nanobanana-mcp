@@ -44,9 +44,10 @@ Also listed in the [MCP Registry](https://registry.modelcontextprotocol.io) as `
 |---|---|---|
 | `prompt` | ✅ | Image description |
 | `model` | | Gemini image model id (default `gemini-3.1-flash-image`) |
-| `aspectRatio` | | `1:1`, `16:9`, `9:16`, `4:3`, `21:9`, and similar |
-| `size` | | `1K`, `2K`, or `4K` |
+| `aspectRatio` | | `1:1`, `16:9`, `9:16`, `21:9`, extremes up to `1:4` and `8:1` |
+| `size` | | `512`, `1K`, `2K`, or `4K` |
 | `grounding` | | Ground with Google Search for factual accuracy |
+| `thinkingLevel` | | `minimal` or `high`; `high` helps complex or text-heavy images |
 | `outputDir` | | Save directory (default `./nano-banana`) |
 | `filename` | | Base filename without extension |
 
@@ -56,7 +57,7 @@ Same params, plus:
 
 | Param | Required | Description |
 |---|---|---|
-| `images` | ✅ | Input image path(s). The first is the base; the rest are references. |
+| `images` | ✅ | Input file path(s): png, jpg, webp, heic, or pdf. The first is the base; the rest are references. |
 
 Both tools save to disk and return the file path.
 

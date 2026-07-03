@@ -6,17 +6,20 @@
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { z } from "zod";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import { createRequire } from "node:module";
+
+const { version } = createRequire(import.meta.url)("../package.json") as { version: string };
 
 // Nano Banana 2 (GA). Override globally via NANOBANANA_MODEL or per-call via `model`.
 const DEFAULT_MODEL = process.env.NANOBANANA_MODEL || "gemini-3.1-flash-image";
 const API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
-// Gemini's supported inline image types (GIF is not one of them).
+// Gemini's supported inline input types (GIF is not one of them; PDF is).
 const MIME: Record<string, string> = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
@@ -24,6 +27,7 @@ const MIME: Record<string, string> = {
   ".webp": "image/webp",
   ".heic": "image/heic",
   ".heif": "image/heif",
+  ".pdf": "application/pdf",
 };
 const EXT: Record<string, string> = {
   "image/png": ".png",
@@ -72,8 +76,9 @@ function slug(text: string): string {
 interface Options {
   model?: string;
   aspectRatio?: string;
-  size?: "1K" | "2K" | "4K";
+  size?: "512" | "1K" | "2K" | "4K";
   grounding?: boolean;
+  thinkingLevel?: "minimal" | "high";
   outputDir?: string;
   filename?: string;
 }
@@ -88,7 +93,7 @@ async function run(prompt: string, images: string[], opts: Options): Promise<str
     const mime = MIME[ext];
     if (!mime) {
       throw new Error(
-        `Unsupported input image type "${ext || "(no extension)"}" for ${img}. Use png, jpg, webp, or heic.`,
+        `Unsupported input image type "${ext || "(no extension)"}" for ${img}. Use png, jpg, webp, heic, or pdf.`,
       );
     }
     const data = await fs.readFile(p);
@@ -100,6 +105,13 @@ async function run(prompt: string, images: string[], opts: Options): Promise<str
       ? { imageConfig: { aspectRatio: opts.aspectRatio, imageSize: opts.size } }
       : {}),
     ...(opts.grounding ? { tools: [{ googleSearch: {} }] } : {}),
+    ...(opts.thinkingLevel
+      ? {
+          thinkingConfig: {
+            thinkingLevel: opts.thinkingLevel === "high" ? ThinkingLevel.HIGH : ThinkingLevel.MINIMAL,
+          },
+        }
+      : {}),
   };
 
   let res;
@@ -161,14 +173,18 @@ async function asText(fn: () => Promise<string>): Promise<ToolResult> {
 
 const common = {
   model: z.string().optional().describe(`Gemini image model id (default: ${DEFAULT_MODEL})`),
-  aspectRatio: z.string().optional().describe("e.g. 1:1, 16:9, 9:16, 4:3, 21:9"),
-  size: z.enum(["1K", "2K", "4K"]).optional().describe("Output resolution"),
+  aspectRatio: z.string().optional().describe("e.g. 1:1, 16:9, 9:16, 21:9, up to 1:4 or 8:1"),
+  size: z.enum(["512", "1K", "2K", "4K"]).optional().describe("Output resolution"),
   grounding: z.boolean().optional().describe("Ground with Google Search for factual accuracy"),
+  thinkingLevel: z
+    .enum(["minimal", "high"])
+    .optional()
+    .describe("Model reasoning effort; high helps complex or text-heavy images"),
   outputDir: z.string().optional().describe("Save directory (default: ./nano-banana)"),
   filename: z.string().optional().describe("Base filename without extension"),
 };
 
-const server = new McpServer({ name: "nanobanana-mcp", version: "0.1.2" });
+const server = new McpServer({ name: "nanobanana-mcp", version });
 
 server.registerTool(
   "generate_image",
